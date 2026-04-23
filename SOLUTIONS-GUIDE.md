@@ -12,20 +12,44 @@
 ```bash
 # 1. Network discovery
 nmap -sn 172.23.0.0/24
-# Output: 172.23.0.2 (kali_attacker), 172.23.0.3 (victim)
 
-# 2. Full port scan
-nmap -p- -T4 172.23.0.3
-# Open ports: 80, 3306
+# Output:
+# 172.23.0.1
+# 172.23.0.2 (kali_attacker)
+# 172.23.0.3 (victim)
 
-# 3. Service detection
-nmap -sV -sC -O 172.23.0.3 -oA full-scan
+# 2. Full TCP SYN scan (all ports)
+nmap -sS -p- -T4 172.23.0.3 -oN tcp-syn-scan.txt
+
+# Open ports:
+# 80/tcp   → HTTP
+# 3306/tcp → MySQL
+
+# 3. Service and version detection
+nmap -sV -sC -p 80,3306 172.23.0.3 -oN service-scan.txt
 ```
 
 **Key Findings:**
-- **FTP (21):** vsftpd 3.0.5
-- **HTTP (80):** Apache httpd 2.4.7 
-- **MySQL (3306):** MySQL unauthorized
+Network: 172.23.0.0/24
+----------------------------------------
+
+Host: 172.23.0.1
+- **FTP (21) → vsftpd 3.0.5**
+- **HTTP (80) → Apache 2.4.66 (Debian)**
+
+Host: 172.23.0.2 (Attacker)
+- No open ports
+
+Host: 172.23.0.3 (Victim)
+- **HTTP (80) → Apache 2.4.7 (Ubuntu)**
+    • Directory listing enabled
+    • Applications:
+        /chat/
+        /drupal/
+        /phpmyadmin/
+        payroll_app.php
+
+- **MySQL (3306) → Service exposed (authentication required)**
 
 ---
 
