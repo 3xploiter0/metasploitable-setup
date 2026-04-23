@@ -502,8 +502,3 @@ msfconsole
 ## Disclaimer
 
 This setup is for **EDUCATIONAL PURPOSES ONLY**. Use only in isolated lab environments. The author assumes no responsibility for misuse of this information. Always obtain proper authorization before testing any system.
-
----
-
-*Last updated: $(date +%Y-%m-%d)*  
-*Maintained by: Your Red Team Lab*
