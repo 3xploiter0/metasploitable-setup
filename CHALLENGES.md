@@ -367,6 +367,3 @@ These challenges align with:
 - "The Web Application Hacker's Handbook"
 
 ---
-
-*Last updated: $(date +%Y-%m-%d)*  
-*For Certified Red Team Analyst Training*
