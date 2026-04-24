@@ -12,22 +12,41 @@
 ```bash
 # 1. Network discovery
 nmap -sn 172.23.0.0/24
+# Output: 172.23.0.2 (kali_attacker), 172.23.0.3 (victim)
 
-# Output:
-# 172.23.0.1
-# 172.23.0.2 (kali_attacker)
-# 172.23.0.3 (victim)
+# 2. Full port scan
+nmap -p- -T4 172.23.0.3
+# Open ports: 21, 22, 23, 25, 53, 80, 111, 139, 445, 512, 513, 514, 1099, 1524, 2049, 2121, 3306, 5432, 5900, 6000, 6667, 8009, 8180
 
-# 2. Full TCP SYN scan (all ports)
-nmap -sS -p- -T4 172.23.0.3 -oN tcp-syn-scan.txt
-
-# Open ports:
-# 80/tcp   → HTTP
-# 3306/tcp → MySQL
-
-# 3. Service and version detection
-nmap -sV -sC -p 80,3306 172.23.0.3 -oN service-scan.txt
+# 3. Service detection
+nmap -sV -sC -O 172.23.0.3 -oA full-scan
 ```
+
+**Key Findings:**
+- **FTP (21):** vsftpd 2.3.4 - Known backdoor vulnerability
+- **SSH (22):** OpenSSH 4.7p1 Debian 8ubuntu1 - Weak encryption
+- **HTTP (80):** Apache httpd 2.2.8 - Multiple vulnerabilities
+- **SMB (139/445):** Samba 3.0.20-Debian - Multiple vulnerabilities
+- **MySQL (3306):** MySQL 5.0.51a-3ubuntu5 - Weak credentials
+
+**Web Enumeration:**
+```bash
+# Directory brute force
+gobuster dir -u http://172.23.0.3 -w /usr/share/wordlists/dirb/common.txt -o web-dirs.txt
+# Found: /phpmyadmin/, /test/, /doc/, /icons/, /mutillidae/, /dvwa/
+
+# Technology detection
+whatweb http://172.23.0.3
+# Apache/2.2.8, PHP/5.2.4, MySQL, JQuery
+```
+
+**SMB Enumeration:**
+```bash
+enum4linux -a 172.23.0.3
+# Shares: tmp, opt, IPC$, ADMIN$
+# Users: root, msfadmin, user, postgres, service
+```
+---
 
 **Key Findings:**
 Network: 172.23.0.0/24
